@@ -44,11 +44,20 @@ class Journal {
 
 public class Main {
     public static void main(String[] args) {
-        User user = new User("Harshith");
+        
+        User[] users = new User[2];
+        users[0] = new User("Harshith");
+        users[1] = new User("Aarav");
 
-        user.addJournalEntry("2024-08-01", "Started learning Java.");
-        user.addJournalEntry("2024-08-02", "Practiced OOP concepts.");
+        users[0].addJournalEntry("2024-08-01", "Started learning Java.");
+        users[0].addJournalEntry("2024-08-02", "Practiced OOP concepts.");
+        
+        users[1].addJournalEntry("2024-08-03", "Started learning Python.");
+        users[1].addJournalEntry("2024-08-04", "Explored data structures.");
 
-        user.viewJournalEntries();
+        for (User user : users) {
+            user.viewJournalEntries();
+            System.out.println();
+        }
     }
 }
