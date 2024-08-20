@@ -1,25 +1,25 @@
 class User {
-    private String name;
-    private Journal journal;
+    String name;
+    Journal journal;
 
     public User(String userName) {
-        name = userName;
-        journal = new Journal();
+        this.name = userName;
+        this.journal = new Journal();
     }
 
     public void addJournalEntry(String date, String content) {
-        journal.addEntry(date, content);
+        this.journal.addEntry(date, content);
     }
 
     public void viewJournalEntries() {
-        System.out.println("Journal Entries for " + name + ":");
-        journal.displayAllEntries();
+        System.out.println("Journal Entries for " + this.name + ":");
+        this.journal.displayAllEntries();
     }
 }
 
 class Journal {
-    private String[] entries;
-    private int entryCount;
+    String[] entries;
+    int entryCount;
 
     public Journal() {
         entries = new String[5];
