@@ -4,7 +4,7 @@ class User {
 
     public User(String userName) {
         this.name = userName;
-        this.journal = new Journal();
+        this.journal = new Journal(); 
     }
 
     public void addJournalEntry(String date, String content) {
@@ -15,14 +15,22 @@ class User {
         System.out.println("Journal Entries for " + this.name + ":");
         this.journal.displayAllEntries();
     }
+
+   
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+        // System.out.println("User object is being destroyed");
+    }
 }
 
 class Journal {
     String[] entries;
     int entryCount;
 
+  
     public Journal() {
-        entries = new String[5];
+        entries = new String[5]; 
         entryCount = 0;
     }
 
@@ -40,14 +48,21 @@ class Journal {
             System.out.println(entries[i]);
         }
     }
+
+    
+    protected void finalize() throws Throwable {
+        super.finalize();
+        // System.out.println("Journal object is being destroyed");
+    }
 }
 
 public class Main {
     public static void main(String[] args) {
         
-        User[] users = new User[2];
-        users[0] = new User("Harshith");
-        users[1] = new User("Aarav");
+      
+        User[] users = new User[2]; 
+        users[0] = new User("Harshith"); 
+        users[1] = new User("Aarav"); 
 
         users[0].addJournalEntry("2024-08-01", "Started learning Java.");
         users[0].addJournalEntry("2024-08-02", "Practiced OOP concepts.");
