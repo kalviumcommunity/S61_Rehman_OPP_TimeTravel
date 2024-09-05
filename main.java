@@ -2,12 +2,12 @@ class User {
     String name;
     Journal journal;
     
-    static int userCount = 0;
+    static int userCount = 0; 
 
     public User(String userName) {
         this.name = userName;
         this.journal = new Journal();
-        userCount++;
+        userCount++; 
     }
 
     public void addJournalEntry(String date, String content) {
@@ -28,7 +28,7 @@ class Journal {
     String[] entries;
     int entryCount;
 
-    static int totalJournalEntries = 0;
+    static int totalJournalEntries = 0; 
 
     public Journal() {
         entries = new String[5];
@@ -39,7 +39,7 @@ class Journal {
         if (entryCount < 5) {
             entries[entryCount] = date + ": " + content;
             entryCount++;
-            totalJournalEntries++; 
+            totalJournalEntries++;
         } else {
             System.out.println("Journal is full!");
         }
