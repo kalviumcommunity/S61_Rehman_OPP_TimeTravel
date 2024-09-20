@@ -1,24 +1,34 @@
 class User {
     String name;
     Journal journal;
-    
-    static int userCount = 0; 
+
+    static int userCount = 0;
+    static User[] users = new User[10];
 
     public User(String userName) {
         this.name = userName;
         this.journal = new Journal();
-        userCount++; 
+        users[userCount] = this;
+        userCount++;
     }
-
-    public void addJournalEntry(String date, String content) {
-        this.journal.addEntry(date, content);
+// static member function 
+    public static void addJournalEntry(int userId, String date, String content) {
+        if (userId >= 0 && userId < userCount) {
+            users[userId].journal.addEntry(date, content);
+        } else {
+            System.out.println("Invalid user ID!");
+        }
     }
-
-    public void viewJournalEntries() {
-        System.out.println("Journal Entries for " + this.name + ":");
-        this.journal.displayAllEntries();
+// static member function 
+    public static void viewJournalEntries(int userId) {
+        if (userId >= 0 && userId < userCount) {
+            System.out.println("Journal Entries for " + users[userId].name + ":");
+            users[userId].journal.displayAllEntries();
+        } else {
+            System.out.println("Invalid user ID!");
+        }
     }
-
+// static member function 
     public static void displayUserCount() {
         System.out.println("Total number of users: " + userCount);
     }
@@ -50,7 +60,7 @@ class Journal {
             System.out.println(entries[i]);
         }
     }
-
+// static member function 
     public static void displayTotalJournalEntries() {
         System.out.println("Total journal entries across all users: " + totalJournalEntries);
     }
@@ -58,23 +68,20 @@ class Journal {
 
 public class Main {
     public static void main(String[] args) {
-        User[] users = new User[2];
-        users[0] = new User("Harshith");
-        users[1] = new User("Aarav");
+        new User("Harshith");
+        new User("Aarav");
 
-        users[0].addJournalEntry("2024-08-01", "Started learning Java.");
-        users[0].addJournalEntry("2024-08-02", "Practiced OOP concepts.");
+        User.addJournalEntry(0, "2024-08-01", "Started learning Java.");
+        User.addJournalEntry(0, "2024-08-02", "Practiced OOP concepts.");
+        
+        User.addJournalEntry(1, "2024-08-03", "Started learning Python.");
+        User.addJournalEntry(1, "2024-08-04", "Explored data structures.");
 
-        users[1].addJournalEntry("2024-08-03", "Started learning Python.");
-        users[1].addJournalEntry("2024-08-04", "Explored data structures.");
-
-        for (User user : users) {
-            user.viewJournalEntries();
-            System.out.println();
-        }
+        User.viewJournalEntries(0);
+        System.out.println();
+        User.viewJournalEntries(1);
 
         User.displayUserCount();
-
         Journal.displayTotalJournalEntries();
     }
 }
