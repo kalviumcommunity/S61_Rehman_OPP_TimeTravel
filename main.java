@@ -1,9 +1,9 @@
 class User {
-    String name;
-    Journal journal;
+    private String name;
+    private Journal journal;
 
-    static int userCount = 0;
-    static User[] users = new User[10];
+    private static int userCount = 0;
+    private static User[] users = new User[10];
 
     public User(String userName) {
         this.name = userName;
@@ -11,7 +11,16 @@ class User {
         users[userCount] = this;
         userCount++;
     }
-// static member function 
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    // Static member function
     public static void addJournalEntry(int userId, String date, String content) {
         if (userId >= 0 && userId < userCount) {
             users[userId].journal.addEntry(date, content);
@@ -19,30 +28,37 @@ class User {
             System.out.println("Invalid user ID!");
         }
     }
-// static member function 
+
+    // Static member function 
     public static void viewJournalEntries(int userId) {
         if (userId >= 0 && userId < userCount) {
-            System.out.println("Journal Entries for " + users[userId].name + ":");
+            System.out.println("Journal Entries for " + users[userId].getName() + ":");
             users[userId].journal.displayAllEntries();
         } else {
             System.out.println("Invalid user ID!");
         }
     }
-// static member function 
+
+    // Static member function 
     public static void displayUserCount() {
         System.out.println("Total number of users: " + userCount);
     }
 }
 
 class Journal {
-    String[] entries;
-    int entryCount;
+    private String[] entries;
+    private int entryCount;
 
-    static int totalJournalEntries = 0; 
+    private static int totalJournalEntries = 0;
 
     public Journal() {
         entries = new String[5];
         entryCount = 0;
+    }
+
+    // Getter for entryCount
+    public int getEntryCount() {
+        return entryCount;
     }
 
     public void addEntry(String date, String content) {
@@ -60,7 +76,8 @@ class Journal {
             System.out.println(entries[i]);
         }
     }
-// static member function 
+
+    // Static member function 
     public static void displayTotalJournalEntries() {
         System.out.println("Total journal entries across all users: " + totalJournalEntries);
     }
