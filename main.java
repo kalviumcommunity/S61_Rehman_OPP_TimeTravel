@@ -2,14 +2,23 @@ class User {
     private String name;
     private Journal journal;
 
-   private static int userCount = 0;
+    private static int userCount = 0;
     private static User[] users = new User[10];
+
+    public User() {
+        this.name = "Unknown User"; 
+        this.journal = new Journal();
+        users[userCount] = this;
+        userCount++;
+        System.out.println("Default constructor called for User.");
+    }
 
     public User(String userName) {
         this.name = userName;
         this.journal = new Journal();
         users[userCount] = this;
         userCount++;
+        System.out.println("Parameterized constructor called for User.");
     }
 
     public String getName() {
@@ -37,9 +46,14 @@ class User {
         }
     }
 
-    // Static member function to display total user count
     public static void displayUserCount() {
         System.out.println("Total number of users: " + userCount);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        System.out.println("User object is being deleted: " + this.name);
+        super.finalize();
     }
 }
 
@@ -52,6 +66,7 @@ class Journal {
     public Journal() {
         entries = new String[5];
         entryCount = 0;
+        System.out.println("Default constructor called for Journal.");
     }
 
     public int getEntryCount() {
@@ -68,7 +83,6 @@ class Journal {
         }
     }
 
-    // Public method to display all entries (Abstraction)
     public void displayAllEntries() {
         for (int i = 0; i < entryCount; i++) {
             System.out.println(entries[i]);
@@ -78,18 +92,23 @@ class Journal {
     public static void displayTotalJournalEntries() {
         System.out.println("Total journal entries across all users: " + totalJournalEntries);
     }
+
+    @Override
+    protected void finalize() throws Throwable {
+        System.out.println("Journal object is being deleted.");
+        super.finalize();
+    }
 }
 
 public class Main {
     public static void main(String[] args) {
-        new User("Harshith");
-        new User("Aarav");
+        // Using default constructor for User
+        User defaultUser = new User();
+        User.addJournalEntry(0, "2024-09-01", "Created using default constructor.");
 
-        User.addJournalEntry(0, "2024-08-01", "Started learning Java.");
-        User.addJournalEntry(0, "2024-08-02", "Practiced OOP concepts.");
-
-        User.addJournalEntry(1, "2024-08-03", "Started learning Python.");
-        User.addJournalEntry(1, "2024-08-04", "Explored data structures.");
+        // Using parameterized constructor for User
+        User paramUser = new User("Aarav");
+        User.addJournalEntry(1, "2024-09-02", "Created using parameterized constructor.");
 
         User.viewJournalEntries(0);
         System.out.println();
