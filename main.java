@@ -88,13 +88,18 @@ class PremiumUser extends SpecialUser {
 class Journal {
     private String[] entries;
     private int entryCount;
-
     private static int totalJournalEntries = 0;
 
     public Journal() {
-        entries = new String[5];
-        entryCount = 0;
+        this.entries = new String[5];
+        this.entryCount = 0;
         System.out.println("Default constructor called for Journal.");
+    }
+
+    public Journal(int size) {
+        this.entries = new String[size];
+        this.entryCount = 0;
+        System.out.println("Custom-sized Journal created with capacity: " + size);
     }
 
     public int getEntryCount() {
@@ -102,7 +107,7 @@ class Journal {
     }
 
     public void addEntry(String date, String content) {
-        if (entryCount < 5) {
+        if (entryCount < entries.length) {
             entries[entryCount] = date + ": " + content;
             entryCount++;
             totalJournalEntries++;
@@ -143,6 +148,9 @@ public class Main {
         PremiumUser premiumUser = new PremiumUser("Sam", "Priority Support", 15.0);
         User.addJournalEntry(3, "2024-09-04", "Premium user with a discount.");
         premiumUser.showDiscountRate();
+
+        Journal customJournal = new Journal(10); // overloaded constructor for Journal
+        customJournal.addEntry("2024-09-05", "Custom-sized journal entry.");
 
         User.viewJournalEntries(0);
         System.out.println();
