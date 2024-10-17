@@ -57,6 +57,34 @@ class User {
     }
 }
 
+class SpecialUser extends User {
+    private String specialFeature;
+
+    public SpecialUser(String name, String feature) {
+        super(name);
+        this.specialFeature = feature;
+        System.out.println("SpecialUser with feature: " + feature);
+    }
+
+    public void showSpecialFeature() {
+        System.out.println("Special Feature: " + specialFeature);
+    }
+}
+
+class PremiumUser extends SpecialUser {
+    private double discountRate;
+
+    public PremiumUser(String name, String feature, double discount) {
+        super(name, feature);
+        this.discountRate = discount;
+        System.out.println("PremiumUser with discount rate: " + discount + "%");
+    }
+
+    public void showDiscountRate() {
+        System.out.println("Discount Rate: " + discountRate + "%");
+    }
+}
+
 class Journal {
     private String[] entries;
     private int entryCount;
@@ -102,17 +130,27 @@ class Journal {
 
 public class Main {
     public static void main(String[] args) {
-        // Using default constructor for User
         User defaultUser = new User();
         User.addJournalEntry(0, "2024-09-01", "Created using default constructor.");
 
-        // Using parameterized constructor for User
         User paramUser = new User("Aarav");
         User.addJournalEntry(1, "2024-09-02", "Created using parameterized constructor.");
+
+        SpecialUser specialUser = new SpecialUser("Riya", "Priority Support");
+        User.addJournalEntry(2, "2024-09-03", "Special user with priority support.");
+        specialUser.showSpecialFeature();
+
+        PremiumUser premiumUser = new PremiumUser("Sam", "Priority Support", 15.0);
+        User.addJournalEntry(3, "2024-09-04", "Premium user with a discount.");
+        premiumUser.showDiscountRate();
 
         User.viewJournalEntries(0);
         System.out.println();
         User.viewJournalEntries(1);
+        System.out.println();
+        User.viewJournalEntries(2);
+        System.out.println();
+        User.viewJournalEntries(3);
 
         User.displayUserCount();
         Journal.displayTotalJournalEntries();
