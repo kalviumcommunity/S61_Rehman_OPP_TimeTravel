@@ -1,12 +1,26 @@
-class User {
-    private String name;
-    private Journal journal;
 
+abstract class UserType {
+    protected String name;
+
+    public UserType(String name) {
+        this.name = name;
+    }
+
+    public abstract void showUserTypeDetails(); // Abstract method (pure virtual function)
+
+    public String getName() {
+        return name;
+    }
+}
+
+// Modify User class to extend UserType
+class User extends UserType {
+    private Journal journal;
     private static int userCount = 0;
     private static User[] users = new User[10];
 
     public User() {
-        this.name = "Unknown User"; 
+        super("Unknown User");
         this.journal = new Journal();
         users[userCount] = this;
         userCount++;
@@ -14,7 +28,7 @@ class User {
     }
 
     public User(String userName) {
-        this.name = userName;
+        super(userName);
         this.journal = new Journal();
         users[userCount] = this;
         userCount++;
@@ -51,12 +65,18 @@ class User {
     }
 
     @Override
+    public void showUserTypeDetails() {
+        System.out.println("Standard User: " + name);
+    }
+
+    @Override
     protected void finalize() throws Throwable {
         System.out.println("User object is being deleted: " + this.name);
         super.finalize();
     }
 }
 
+// SpecialUser class extending User
 class SpecialUser extends User {
     private String specialFeature;
 
@@ -66,11 +86,17 @@ class SpecialUser extends User {
         System.out.println("SpecialUser with feature: " + feature);
     }
 
+    @Override
+    public void showUserTypeDetails() {
+        System.out.println("Special User with feature: " + specialFeature);
+    }
+
     public void showSpecialFeature() {
         System.out.println("Special Feature: " + specialFeature);
     }
 }
 
+// PremiumUser class extending SpecialUser
 class PremiumUser extends SpecialUser {
     private double discountRate;
 
@@ -80,11 +106,17 @@ class PremiumUser extends SpecialUser {
         System.out.println("PremiumUser with discount rate: " + discount + "%");
     }
 
+    @Override
+    public void showUserTypeDetails() {
+        System.out.println("Premium User with discount rate: " + discountRate + "%");
+    }
+
     public void showDiscountRate() {
         System.out.println("Discount Rate: " + discountRate + "%");
     }
 }
 
+// Journal class to manage journal entries
 class Journal {
     private String[] entries;
     private int entryCount;
@@ -133,6 +165,7 @@ class Journal {
     }
 }
 
+// Main class to demonstrate functionality
 public class Main {
     public static void main(String[] args) {
         User defaultUser = new User();
@@ -151,6 +184,12 @@ public class Main {
 
         Journal customJournal = new Journal(10); // overloaded constructor for Journal
         customJournal.addEntry("2024-09-05", "Custom-sized journal entry.");
+
+        // Displaying details of each user type
+        defaultUser.showUserTypeDetails();
+        paramUser.showUserTypeDetails();
+        specialUser.showUserTypeDetails();
+        premiumUser.showUserTypeDetails();
 
         User.viewJournalEntries(0);
         System.out.println();
