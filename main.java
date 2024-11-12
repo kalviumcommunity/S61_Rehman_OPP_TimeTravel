@@ -1,4 +1,3 @@
-
 abstract class UserType {
     protected String name;
 
@@ -6,22 +5,21 @@ abstract class UserType {
         this.name = name;
     }
 
-    public abstract void showUserTypeDetails(); // Abstract method (pure virtual function)
+    public abstract void showUserTypeDetails();
 
     public String getName() {
         return name;
     }
 }
 
-// Modify User class to extend UserType
 class User extends UserType {
-    private Journal journal;
     private static int userCount = 0;
     private static User[] users = new User[10];
+    private JournalManager journalManager;
 
     public User() {
         super("Unknown User");
-        this.journal = new Journal();
+        this.journalManager = new JournalManager(this);
         users[userCount] = this;
         userCount++;
         System.out.println("Default constructor called for User.");
@@ -29,35 +27,14 @@ class User extends UserType {
 
     public User(String userName) {
         super(userName);
-        this.journal = new Journal();
+        this.journalManager = new JournalManager(this);
         users[userCount] = this;
         userCount++;
         System.out.println("Parameterized constructor called for User.");
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public static void addJournalEntry(int userId, String date, String content) {
-        if (userId >= 0 && userId < userCount) {
-            users[userId].journal.addEntry(date, content);
-        } else {
-            System.out.println("Invalid user ID!");
-        }
-    }
-
-    public static void viewJournalEntries(int userId) {
-        if (userId >= 0 && userId < userCount) {
-            System.out.println("Journal Entries for " + users[userId].getName() + ":");
-            users[userId].journal.displayAllEntries();
-        } else {
-            System.out.println("Invalid user ID!");
-        }
+    public JournalManager getJournalManager() {
+        return journalManager;
     }
 
     public static void displayUserCount() {
@@ -76,7 +53,6 @@ class User extends UserType {
     }
 }
 
-// SpecialUser class extending User
 class SpecialUser extends User {
     private String specialFeature;
 
@@ -96,7 +72,6 @@ class SpecialUser extends User {
     }
 }
 
-// PremiumUser class extending SpecialUser
 class PremiumUser extends SpecialUser {
     private double discountRate;
 
@@ -116,7 +91,30 @@ class PremiumUser extends SpecialUser {
     }
 }
 
-// Journal class to manage journal entries
+// JournalManager class to manage journal entries
+class JournalManager {
+    private Journal journal;
+    private User user;
+
+    public JournalManager(User user) {
+        this.user = user;
+        this.journal = new Journal();
+    }
+
+    public void addJournalEntry(String date, String content) {
+        journal.addEntry(date, content);
+    }
+
+    public void viewJournalEntries() {
+        System.out.println("Journal Entries for " + user.getName() + ":");
+        journal.displayAllEntries();
+    }
+
+    public static void displayTotalJournalEntries() {
+        Journal.displayTotalJournalEntries();
+    }
+}
+
 class Journal {
     private String[] entries;
     private int entryCount;
@@ -165,24 +163,23 @@ class Journal {
     }
 }
 
-// Main class to demonstrate functionality
 public class Main {
     public static void main(String[] args) {
         User defaultUser = new User();
-        User.addJournalEntry(0, "2024-09-01", "Created using default constructor.");
+        defaultUser.getJournalManager().addJournalEntry("2024-09-01", "Created using default constructor.");
 
         User paramUser = new User("Aarav");
-        User.addJournalEntry(1, "2024-09-02", "Created using parameterized constructor.");
+        paramUser.getJournalManager().addJournalEntry("2024-09-02", "Created using parameterized constructor.");
 
         SpecialUser specialUser = new SpecialUser("Riya", "Priority Support");
-        User.addJournalEntry(2, "2024-09-03", "Special user with priority support.");
+        specialUser.getJournalManager().addJournalEntry("2024-09-03", "Special user with priority support.");
         specialUser.showSpecialFeature();
 
         PremiumUser premiumUser = new PremiumUser("Sam", "Priority Support", 15.0);
-        User.addJournalEntry(3, "2024-09-04", "Premium user with a discount.");
+        premiumUser.getJournalManager().addJournalEntry("2024-09-04", "Premium user with a discount.");
         premiumUser.showDiscountRate();
 
-        Journal customJournal = new Journal(10); // overloaded constructor for Journal
+        Journal customJournal = new Journal(10);
         customJournal.addEntry("2024-09-05", "Custom-sized journal entry.");
 
         // Displaying details of each user type
@@ -191,15 +188,16 @@ public class Main {
         specialUser.showUserTypeDetails();
         premiumUser.showUserTypeDetails();
 
-        User.viewJournalEntries(0);
+        // Viewing journal entries
+        defaultUser.getJournalManager().viewJournalEntries();
         System.out.println();
-        User.viewJournalEntries(1);
+        paramUser.getJournalManager().viewJournalEntries();
         System.out.println();
-        User.viewJournalEntries(2);
+        specialUser.getJournalManager().viewJournalEntries();
         System.out.println();
-        User.viewJournalEntries(3);
+        premiumUser.getJournalManager().viewJournalEntries();
 
         User.displayUserCount();
-        Journal.displayTotalJournalEntries();
+        JournalManager.displayTotalJournalEntries();
     }
 }
