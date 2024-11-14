@@ -91,6 +91,34 @@ class PremiumUser extends SpecialUser {
     }
 }
 
+// New AdminUser class to demonstrate Liskov Substitution Principle
+class AdminUser extends User {
+    private String adminLevel;
+
+    public AdminUser(String name, String adminLevel) {
+        super(name);
+        this.adminLevel = adminLevel;
+        System.out.println("AdminUser with level: " + adminLevel);
+    }
+
+    @Override
+    public void showUserTypeDetails() {
+        System.out.println("Admin User with level: " + adminLevel);
+    }
+
+    // New functionality specific to AdminUser
+    public void viewAllJournalEntries(UserType[] users) {
+        System.out.println("Admin viewing all journal entries:");
+        for (UserType user : users) {
+            if (user instanceof User) {
+                System.out.println("Entries for user: " + user.getName());
+                ((User) user).getJournalManager().viewJournalEntries();
+                System.out.println();
+            }
+        }
+    }
+}
+
 // JournalManager class to manage journal entries
 class JournalManager {
     private Journal journal;
@@ -188,14 +216,12 @@ public class Main {
         specialUser.showUserTypeDetails();
         premiumUser.showUserTypeDetails();
 
-        // Viewing journal entries
-        defaultUser.getJournalManager().viewJournalEntries();
-        System.out.println();
-        paramUser.getJournalManager().viewJournalEntries();
-        System.out.println();
-        specialUser.getJournalManager().viewJournalEntries();
-        System.out.println();
-        premiumUser.getJournalManager().viewJournalEntries();
+        // AdminUser created for Liskov Substitution Principle demonstration
+        AdminUser adminUser = new AdminUser("Alex", "Super Admin");
+        adminUser.getJournalManager().addJournalEntry("2024-09-06", "Admin user entry.");
+        
+        UserType[] users = {defaultUser, paramUser, specialUser, premiumUser, adminUser};
+        adminUser.viewAllJournalEntries(users); // Admin viewing all users' journal entries
 
         User.displayUserCount();
         JournalManager.displayTotalJournalEntries();
