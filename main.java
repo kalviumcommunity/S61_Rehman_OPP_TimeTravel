@@ -1,3 +1,84 @@
+// JournalInterface to follow Dependency Inversion Principle
+interface JournalInterface {
+    void addEntry(String date, String content);
+    void displayAllEntries();
+    int getEntryCount();
+    static void displayTotalJournalEntries() {}
+}
+
+// JournalManager class depends on JournalInterface rather than Journal directly
+class JournalManager {
+    private JournalInterface journal;
+    private User user;
+
+    public JournalManager(User user, JournalInterface journal) {
+        this.user = user;
+        this.journal = journal;
+    }
+
+    public void addJournalEntry(String date, String content) {
+        journal.addEntry(date, content);
+    }
+
+    public void viewJournalEntries() {
+        System.out.println(user.getName() + ":");
+        journal.displayAllEntries();
+    }
+
+    public static void displayTotalJournalEntries() {
+        Journal.displayTotalJournalEntries();
+    }
+}
+
+// Journal class implements JournalInterface
+class Journal implements JournalInterface {
+    private String[] entries;
+    private int entryCount;
+    private static int totalJournalEntries = 0;
+
+    public Journal() {
+        this.entries = new String[5];
+        this.entryCount = 0;
+    }
+
+    public Journal(int size) {
+        this.entries = new String[size];
+        this.entryCount = 0;
+        System.out.println(size);
+    }
+
+    public int getEntryCount() {
+        return entryCount;
+    }
+
+    @Override
+    public void addEntry(String date, String content) {
+        if (entryCount < entries.length) {
+            entries[entryCount] = date + ": " + content;
+            entryCount++;
+            totalJournalEntries++;
+        } else {
+            System.out.println("Journal is full!");
+        }
+    }
+
+    @Override
+    public void displayAllEntries() {
+        for (int i = 0; i < entryCount; i++) {
+            System.out.println(entries[i]);
+        }
+    }
+
+    public static void displayTotalJournalEntries() {
+        System.out.println(totalJournalEntries);
+    }
+
+    @Override
+    protected void finalize() throws Throwable {
+        super.finalize();
+    }
+}
+
 abstract class UserType {
     protected String name;
 
@@ -19,18 +100,16 @@ class User extends UserType {
 
     public User() {
         super("Unknown User");
-        this.journalManager = new JournalManager(this);
+        this.journalManager = new JournalManager(this, new Journal());
         users[userCount] = this;
         userCount++;
-        System.out.println("Default constructor called for User.");
     }
 
     public User(String userName) {
         super(userName);
-        this.journalManager = new JournalManager(this);
+        this.journalManager = new JournalManager(this, new Journal());
         users[userCount] = this;
         userCount++;
-        System.out.println("Parameterized constructor called for User.");
     }
 
     public JournalManager getJournalManager() {
@@ -38,17 +117,17 @@ class User extends UserType {
     }
 
     public static void displayUserCount() {
-        System.out.println("Total number of users: " + userCount);
+        System.out.println(userCount);
     }
 
     @Override
     public void showUserTypeDetails() {
-        System.out.println("Standard User: " + name);
+        System.out.println(name);
     }
 
     @Override
     protected void finalize() throws Throwable {
-        System.out.println("User object is being deleted: " + this.name);
+        System.out.println(this.name);
         super.finalize();
     }
 }
@@ -59,16 +138,16 @@ class SpecialUser extends User {
     public SpecialUser(String name, String feature) {
         super(name);
         this.specialFeature = feature;
-        System.out.println("SpecialUser with feature: " + feature);
+        System.out.println(feature);
     }
 
     @Override
     public void showUserTypeDetails() {
-        System.out.println("Special User with feature: " + specialFeature);
+        System.out.println(specialFeature);
     }
 
     public void showSpecialFeature() {
-        System.out.println("Special Feature: " + specialFeature);
+        System.out.println(specialFeature);
     }
 }
 
@@ -78,12 +157,12 @@ class PremiumUser extends SpecialUser {
     public PremiumUser(String name, String feature, double discount) {
         super(name, feature);
         this.discountRate = discount;
-        System.out.println("PremiumUser with discount rate: " + discount + "%");
+        System.out.println(discount + "%");
     }
 
     @Override
     public void showUserTypeDetails() {
-        System.out.println("Premium User with discount rate: " + discountRate + "%");
+        System.out.println(discountRate + "%");
     }
 
     public void showDiscountRate() {
@@ -91,7 +170,7 @@ class PremiumUser extends SpecialUser {
     }
 }
 
-// New AdminUser class to demonstrate Liskov Substitution Principle
+// New AdminUser class for Liskov Substitution Principle
 class AdminUser extends User {
     private String adminLevel;
 
@@ -108,7 +187,6 @@ class AdminUser extends User {
 
     // New functionality specific to AdminUser
     public void viewAllJournalEntries(UserType[] users) {
-        System.out.println("Admin viewing all journal entries:");
         for (UserType user : users) {
             if (user instanceof User) {
                 System.out.println("Entries for user: " + user.getName());
@@ -116,78 +194,6 @@ class AdminUser extends User {
                 System.out.println();
             }
         }
-    }
-}
-
-// JournalManager class to manage journal entries
-class JournalManager {
-    private Journal journal;
-    private User user;
-
-    public JournalManager(User user) {
-        this.user = user;
-        this.journal = new Journal();
-    }
-
-    public void addJournalEntry(String date, String content) {
-        journal.addEntry(date, content);
-    }
-
-    public void viewJournalEntries() {
-        System.out.println("Journal Entries for " + user.getName() + ":");
-        journal.displayAllEntries();
-    }
-
-    public static void displayTotalJournalEntries() {
-        Journal.displayTotalJournalEntries();
-    }
-}
-
-class Journal {
-    private String[] entries;
-    private int entryCount;
-    private static int totalJournalEntries = 0;
-
-    public Journal() {
-        this.entries = new String[5];
-        this.entryCount = 0;
-        System.out.println("Default constructor called for Journal.");
-    }
-
-    public Journal(int size) {
-        this.entries = new String[size];
-        this.entryCount = 0;
-        System.out.println("Custom-sized Journal created with capacity: " + size);
-    }
-
-    public int getEntryCount() {
-        return entryCount;
-    }
-
-    public void addEntry(String date, String content) {
-        if (entryCount < entries.length) {
-            entries[entryCount] = date + ": " + content;
-            entryCount++;
-            totalJournalEntries++;
-        } else {
-            System.out.println("Journal is full!");
-        }
-    }
-
-    public void displayAllEntries() {
-        for (int i = 0; i < entryCount; i++) {
-            System.out.println(entries[i]);
-        }
-    }
-
-    public static void displayTotalJournalEntries() {
-        System.out.println("Total journal entries across all users: " + totalJournalEntries);
-    }
-
-    @Override
-    protected void finalize() throws Throwable {
-        System.out.println("Journal object is being deleted.");
-        super.finalize();
     }
 }
 
@@ -221,8 +227,7 @@ public class Main {
         adminUser.getJournalManager().addJournalEntry("2024-09-06", "Admin user entry.");
         
         UserType[] users = {defaultUser, paramUser, specialUser, premiumUser, adminUser};
-        adminUser.viewAllJournalEntries(users); // Admin viewing all users' journal entries
-
+        adminUser.viewAllJournalEntries(users); 
         User.displayUserCount();
         JournalManager.displayTotalJournalEntries();
     }
